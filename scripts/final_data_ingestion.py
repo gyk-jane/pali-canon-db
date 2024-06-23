@@ -4,11 +4,26 @@ import pandas as pd
 from scripts.utils import (
     convert_to_json_string, 
     connect_to_preprocess_db, 
-    connect_to_basket_db)
+    connect_to_basket_db,
+    get_file_contents,
+    create_tables,
+    setup_logging
+)
 from scripts.preprocessing.data_cleanup import cleanup_sutta_authors
 
+# Set up logging
+logger = setup_logging('data_ingestion.log')
+
 def ingest_authors(basket: str) -> None:
-    # Reference table for authors
+    """
+    Ingests authors data into the tipitaka-db.
+
+    Args:
+        basket (str): The name of the basket to ingest authors for.
+
+    Returns:
+        None
+    """
     # Getting distinct authors from the translations data
     conn = connect_to_preprocess_db()
     cursor = conn.cursor()
@@ -32,7 +47,15 @@ def ingest_authors(basket: str) -> None:
     conn.close()
     
 def ingest_languages(basket: str) -> None:
-    # Reference table for languages
+    """
+    Ingests languages into the tipitaka-db.
+
+    Args:
+        basket (str): The name of the basket.
+
+    Returns:
+        None
+    """
     # Getting distinct languages from the translations data
     conn = connect_to_preprocess_db()
     cursor = conn.cursor()
@@ -51,6 +74,15 @@ def ingest_languages(basket: str) -> None:
     df.to_sql('Languages', conn, if_exists='replace', index=False)
     
 def ingest_textinfo(basket: str) -> None:
+    """
+    Ingests text information into the TextInfo table in the specified basket database.
+
+    Args:
+        basket (str): The name of the basket database.
+
+    Returns:
+        None
+    """    
     # Get data from preprocess.db
     conn = connect_to_preprocess_db()
     cursor = conn.cursor()
@@ -103,6 +135,17 @@ def ingest_textinfo(basket: str) -> None:
     conn.close()
         
 def ingest_leaflineage(basket: str) -> None:
+    """
+    Ingests the lineage information of leaf nodes into tipitaka-db.
+    Example  of lineage information: 
+        ["bv", "kn", "minor", "sutta", "pitaka"]
+        
+    Parameters:
+    - basket (str): The name of the basket.
+
+    Returns:
+    - None
+    """
     # Get distinct uid from {basket}_translations_json
     conn = connect_to_preprocess_db()
     lineage_df = pd.read_sql_query(f"""SELECT distinct uid 
@@ -133,6 +176,17 @@ def ingest_leaflineage(basket: str) -> None:
     conn.close()
     
 def ingest_translations(basket: str) -> None:
+    """
+    Ingest translations data into tipitaka-db.
+    This table will contain the actual text of the scriptures/translations.
+
+    Args:
+        basket (str): The name of the basket database.
+
+    Returns:
+        None
+    """
+    
     # Connect to preprocess.db to get translations data
     conn = connect_to_preprocess_db()
     predb_translations_df = pd.read_sql_query(f"SELECT * FROM {basket}_translations_json", conn)
@@ -156,30 +210,43 @@ def ingest_translations(basket: str) -> None:
     # Drop _key_html and _key_sc_bilara since they are the same as `id`
     merged_df = merged_df.drop(columns=['_key_html', '_key_sc_bilara'])
     # Combine file_path_html and file_path_sc_bilara into file_path
-    merged_df['file_path'] = merged_df['file_path_html'].combine_first(merged_df['file_path_sc_bilara'])
+    merged_df['file_path'] = merged_df['file_path_html'].combine_first(
+        merged_df['file_path_sc_bilara'])
     merged_df = merged_df.drop(columns=['file_path_html', 'file_path_sc_bilara'])
-    merged_df['file_path'] = merged_df['file_path'].str.replace('^/opt/sc/sc-flask/', 'data/raw/', regex=True)
+    merged_df['file_path'] = merged_df['file_path'].str.replace(
+        '^/opt/sc/sc-flask/', 'data/raw/', regex=True)
     
     # Note the suttas which don't have a corresponding text/translation
+    path = 'data/logs/'
     missing_text = merged_df[merged_df['file_path'].isnull()]
-    missing_text.to_csv(f'{basket}_missing_text.csv', index=False)
+    missing_text.to_csv(f'{path}{basket}_missing_text.csv', index=False)
     
     # Populate `text` column using `file_path`
-    def get_file_contents(file_path: str):
-        if pd.isna(file_path):
-            return None
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                if '.json' in file_path:
-                    return json.load(file)
-                return file.read()
-        except FileNotFoundError:
-            return None
-                
     merged_df['text'] = merged_df['file_path'].apply(get_file_contents)
     
     # ingest merged_df to {basket}_db
     conn = connect_to_basket_db(basket)
     merged_df = convert_to_json_string(merged_df)
     merged_df.to_sql('Translations', conn, if_exists='replace', index=False)
+    
+def main():
+    baskets = ['sutta', 'vinaya', 'abhidhamma']
+    for basket in baskets:
+        logger.info("Creating tables in tipitaka-db")
+        create_tables(basket)
+        
+        logger.info('Ingesting data to tiptika-db   ')
+        print(f'Ingesting {basket} authors...')
+        ingest_authors(basket)
+        print(f'Ingesting {basket} languages...')
+        ingest_languages(basket)
+        print(f'Ingesting {basket} textinfo...')
+        ingest_textinfo(basket)
+        print(f'Ingesting {basket} leaflineage...')
+        ingest_leaflineage(basket)
+        print(f'Ingesting {basket} translations...')
+        ingest_translations(basket)
+
+if __name__ == '__main__':
+    main() 
     

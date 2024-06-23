@@ -1,12 +1,7 @@
-"""_summary_
-
-Returns:
-    _type_: _description_
-"""
-
 import re
 import json
 import sqlite3
+import logging
 import pandas as pd
 
 def decode_unicode_column(df: pd.DataFrame, columns: list) -> pd.DataFrame:
@@ -88,3 +83,63 @@ def connect_to_basket_db(basket: str) -> sqlite3.Connection:
     """
     path = f'data/output/{basket}.db'
     return sqlite3.connect(path)
+
+def get_file_contents(file_path: str):
+    """
+    Read and return the contents of a file.
+
+    Args:
+        file_path (str): The path to the file.
+
+    Returns:
+        str or dict or None: The contents of the file as a string, 
+        a dictionary (if the file is a JSON file), 
+        or None if the file is not found or the file_path is empty.
+
+    """
+    if pd.isna(file_path):
+        return None
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            if '.json' in file_path:
+                return json.load(file)
+            return file.read()
+    except FileNotFoundError:
+        return None
+    
+def create_tables(basket: str):
+    conn = connect_to_basket_db(basket)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    for table in tables:
+        cursor.execute(f"DROP TABLE IF EXISTS {table[0]};")
+    
+    path = f'schemas/{basket}_schema.sql'
+    with open(path, 'r') as f:
+        cursor.executescript(f.read())
+    conn.close()
+
+def setup_logging(log_file):
+    """
+    Set up the logging configuration and return a logger instance.
+
+    Args:
+        log_file (str): The file to which logs should be written.
+
+    Returns:
+        logging.Logger: Configured logger instance.
+    """
+    log_path = f'data/logs/{log_file}'
+    
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_path, mode='w'),
+            logging.StreamHandler()
+        ]
+    )
+    logger = logging.getLogger(__name__)
+    return logger

@@ -40,3 +40,12 @@ def get_suttaplex(basket: str) -> None:
     data = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in data)] # remove duplicates
     with open(f'data/processed/{basket}.json', 'w', encoding='utf-8') as f:
         f.write(json.dumps(data, indent=2))
+
+def main():
+    get_suttaplex('sutta')
+    get_suttaplex('vinaya')
+    get_suttaplex('abhidhamma')
+    
+if __name__ == '__main__':  
+    main()
+    

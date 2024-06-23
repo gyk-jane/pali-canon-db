@@ -1,10 +1,11 @@
 """Creates tables from the suttaplex json data for the given basket:
     1. A table for the main suttaplex data with the name {basket}_json.
     2. A table for the translations data with the name {basket}_translations_json.
+    3. A table for the children data with the name {basket}_menu_children.
+    4. A table for the denormalized children data with the name {basket}_menu_children_denorm.
+    5. A table for the collections data in the preprocess.db.
 """
-
 import json
-import sqlite3
 import pandas as pd
 import os
 import ast
@@ -13,6 +14,11 @@ from scripts.utils import (
     connect_to_preprocess_db, 
     decode_unicode_column,
     convert_to_json_string
+)
+from scripts.preprocessing.data_cleanup import (
+    cleanup_sutta_json,
+    cleanup_sutta_menu_children,
+    cleanup_sutta_menu_children_denorm
 )
 
 def load_suttaplex_to_db(basket: str) -> None:
@@ -57,6 +63,9 @@ def load_suttaplex_to_db(basket: str) -> None:
     translations_df.to_sql(f'{basket}_translations_json', conn, if_exists='replace', index=False)
     conn.close()
     
+    if basket == 'sutta':
+        cleanup_sutta_json()
+    
 def load_children_to_db(basket: str) -> None:
     """
     Load children data from menu API calls into SQLite database preprocess.db.
@@ -85,13 +94,12 @@ def load_children_to_db(basket: str) -> None:
         # Save the children data to a .csv for future use
         children_df.to_csv(f'{path}{basket}_children.csv', index=False)
     
-    # Clean up:
-    # Change 'dhp' to 'dhp_dharmapadas' if uid is 'dharmapadas'
-    # Convert columns to JSON strings if they are of type list, dict, tuple, or set
     children_df = convert_to_json_string(children_df)
     
-    # Write data to database
     children_df.to_sql(f'{basket}_menu_children', conn, if_exists='replace', index=False)
+    
+    if basket == 'sutta':
+        cleanup_sutta_menu_children()
     
 def load_denormalized_children_to_db(basket: str) -> None:
     """
@@ -118,6 +126,9 @@ def load_denormalized_children_to_db(basket: str) -> None:
     children_df = convert_to_json_string(children_df)
     children_df.to_sql(f'{basket}_menu_children_denorm', conn, if_exists='replace', index=False)
     
+    if basket == 'sutta':
+        cleanup_sutta_menu_children_denorm()
+    
 def load_collections_to_db() -> None:
     """
     Load arangodb collections in /collections into preprocess.db.
@@ -137,3 +148,12 @@ def load_collections_to_db() -> None:
                   if_exists='replace', index=False)
     conn.close()
     
+def main():
+    # Load suttaplex data to preprocess.db
+    load_collections_to_db()
+    baskets = ['sutta', 'vinaya', 'abhidhamma']
+    for basket in baskets:
+        load_suttaplex_to_db(basket)
+        load_children_to_db(basket)
+        load_denormalized_children_to_db(basket)   
+         
