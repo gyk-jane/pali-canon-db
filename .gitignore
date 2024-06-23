@@ -5,3 +5,5 @@ vinaya.db
 abhidhamma.db
 preprocess.db
 scratch.ipynb
+__pycache__/
+.DS_Store
