@@ -158,7 +158,7 @@ def ingest_translations(basket: str) -> None:
     # Combine file_path_html and file_path_sc_bilara into file_path
     merged_df['file_path'] = merged_df['file_path_html'].combine_first(merged_df['file_path_sc_bilara'])
     merged_df = merged_df.drop(columns=['file_path_html', 'file_path_sc_bilara'])
-    merged_df['file_path'] = merged_df['file_path'].str.replace('^/opt/sc/sc-flask/', '', regex=True)
+    merged_df['file_path'] = merged_df['file_path'].str.replace('^/opt/sc/sc-flask/', 'data/raw/', regex=True)
     
     # Note the suttas which don't have a corresponding text/translation
     missing_text = merged_df[merged_df['file_path'].isnull()]
