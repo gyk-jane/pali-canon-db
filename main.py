@@ -1,19 +1,19 @@
 import sqlite3
-from get_sc_data import get_suttaplex
-from util import connect_to_basket_db
-from preprocess.cleanup import (
+from scripts.fetch_sc_data import get_suttaplex
+from scripts.utils import connect_to_basket_db
+from scripts.preprocessing.data_cleanup import (
     cleanup_sutta_json,
     cleanup_sutta_menu_children,
     cleanup_sutta_menu_children_denorm
 )
-from ingest import (
+from scripts.final_data_ingestion import (
     ingest_textinfo, 
     ingest_leaflineage, 
     ingest_authors, 
     ingest_languages, 
     ingest_translations
 )
-from preprocess.load_json_to_db import (
+from scripts.preprocessing.preprocessing_data_loader import (
     load_suttaplex_to_db,
     load_children_to_db,
     load_denormalized_children_to_db,
@@ -53,7 +53,8 @@ def create_tables(basket: str):
     for table in tables:
         cursor.execute(f"DROP TABLE IF EXISTS {table[0]};")
     
-    with open(f'{basket}_schema.sql', 'r') as f:
+    path = f'schemas/{basket}_schema.sql'
+    with open(path, 'r') as f:
         cursor.executescript(f.read())
     conn.close()
     
