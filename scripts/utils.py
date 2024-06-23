@@ -71,16 +71,20 @@ def connect_to_preprocess_db() -> sqlite3.Connection:
     path = 'data/processed/preprocess.db'
     return sqlite3.connect(path)
 
-def connect_to_basket_db(basket: str) -> sqlite3.Connection:
+def connect_to_basket_db(basket: str, lang=None) -> sqlite3.Connection:
     """
     Connects to the specified SQLite database.
     
     Args:
-        basket (str): The name of the database to connect to.
+        basket (str): The name of the database to connect to
+        lang (str, optional): The language. Defaults to None.
         
     Returns:
         sqlite3.Connection: The connection object.
     """
+    if lang:
+        path = f'data/output/lang_dbs/{basket}_{lang}.db'
+        return sqlite3.connect(path)
     path = f'data/output/{basket}.db'
     return sqlite3.connect(path)
 
@@ -107,8 +111,23 @@ def get_file_contents(file_path: str):
     except FileNotFoundError:
         return None
     
-def create_tables(basket: str):
-    conn = connect_to_basket_db(basket)
+def create_tables(basket: str, lang=None):
+    """
+    Creates tables in the database for the specified basket and language.
+
+    Args:
+        basket (str): The name of the basket.
+        lang (str, optional): The language. Defaults to None.
+
+    Returns:
+        None
+    """
+    
+    if lang:
+        conn = connect_to_basket_db(basket, lang)
+    else:
+        conn = connect_to_basket_db(basket)
+        
     cursor = conn.cursor()
     
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -143,3 +162,31 @@ def setup_logging(log_file):
     )
     logger = logging.getLogger(__name__)
     return logger
+
+def extract_table_data(cursor, table_name):
+    """
+    Extracts data from a table in a SQLite database.
+
+    Args:
+        cursor (sqlite3.Cursor): The cursor object for the database connection.
+        table_name (str): The name of the table to extract data from.
+
+    Returns:
+        list: A list of tuples containing the data from the table.
+    """
+    cursor.execute(f"SELECT * FROM {table_name};")
+    return cursor.fetchall()
+
+def get_column_names_from_table(cursor, table_name):
+    """
+    Retrieves the column names from a table in a SQLite database.
+
+    Args:
+        cursor (sqlite3.Cursor): The cursor object for the database connection.
+        table_name (str): The name of the table to retrieve column names from.
+
+    Returns:
+        list: A list of column names.
+    """
+    cursor.execute(f"PRAGMA table_info({table_name});")
+    return [column[1] for column in cursor.fetchall()]

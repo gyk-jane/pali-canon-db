@@ -1,8 +1,6 @@
 notes.md
 sc-data/
-sutta.db
-vinaya.db
-abhidhamma.db
+output/
 preprocess.db
 scratch.ipynb
 __pycache__/

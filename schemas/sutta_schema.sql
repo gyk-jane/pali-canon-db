@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS "Translations" (
 	"id"	TEXT,
 	"uid"	TEXT,
 	"lang"	TEXT,
-	"lang_name"	TEXT,
 	"author_uid"	TEXT,
 	"file_path"	TEXT,
 	"text"	TEXT,
