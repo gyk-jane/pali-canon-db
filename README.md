@@ -91,7 +91,7 @@ Contains the actual translations of the texts.
 - `file_path`: Path to the translation file (these are file paths from [sc-data](https://github.com/suttacentral/sc-data) and [bilara-data](https://github.com/suttacentral/bilara-data))
 - `text`: The translated text content
 
-### Querying the Database
+### Querying
 
 A few uses cases, querying `sutta_en.db`:
 
