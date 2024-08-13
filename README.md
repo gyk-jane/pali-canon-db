@@ -1,4 +1,4 @@
-# Tipitaka SQL database
+# Pali Canon SQL database
 All data from [SuttaCentral](https://github.com/suttacentral).
 
 ## Download the databases
