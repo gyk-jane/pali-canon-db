@@ -4,6 +4,7 @@ All data from [SuttaCentral](https://github.com/suttacentral).
 ## Download the databases
 
 [Download here](https://github.com/username/tipitaka-db)
+
 Contains...
 
 1. Database files separated by basket with all available languages in SuttaCentral 
@@ -92,7 +93,7 @@ Contains the actual translations of the texts.
 
 ### Querying the Database
 
-A few uses cases:
+A few uses cases, querying `sutta_en.db`:
 
 1. **Finding a specific text**:
     ```sql
@@ -103,10 +104,18 @@ A few uses cases:
 
     Retrieves texts with "metta" and/or "kindness" in their titles.
 
-3. **Exploring the canon structure**: 
-   Use the `LeafLineage` table in conjunction with `TextInfo` to understand the hierarchical organization of texts.
+2. **Exploring the canon structure**: 
+    ```sql
+    SELECT ti.uid, ti.original_title, ll.lineage
+    FROM TextInfo ti
+    JOIN LeafLineage ll ON ti.uid = ll.uid
+    ORDER BY ll.lineage
+    LIMIT 10;
+    ```
 
-4. **Retrieving translations**:
+    Retrieves the first 10 texts in sutta basket and their lineage.
+
+3. **Retrieving translations**:
     ```sql
     SELECT ti.original_title, t.lang, a.author_fullname, t.text
     FROM Translations t
@@ -117,10 +126,19 @@ A few uses cases:
 
     Retrieves basic information of the available English translations of the Digha Nikaya 1 (DN 1).
    
-6. **Finding works by a specific author**: 
-   Use the `Authors` table joined with `Translations` to find all translations by a particular author.
+4. **Finding works by a specific author**: 
+    ```sql
+    SELECT ti.original_title, t.lang_name
+    FROM Translations t
+    JOIN TextInfo ti ON t.uid = ti.uid
+    JOIN Authors a ON t.author_uid = a.author_uid
+    WHERE a.author_fullname = 'Bhikkhu Bodhi'
+    LIMIT 5;
+    ```
 
-7. **Exploring texts by difficulty or type**: 
+    Lists first 5 texts translated by Bhikku Bodhi. 
+
+5. **Exploring texts by difficulty or type**: 
     ```sql
     SELECT original_title, translated_title, difficulty
     FROM TextInfo
