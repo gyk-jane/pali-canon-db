@@ -1,8 +1,15 @@
-# tipitaka-db
+# Tipitaka SQL database
+All data from [SuttaCentral](https://github.com/suttacentral).
 
 ## Download the databases
 
-[Download](https://github.com/username/tipitaka-db). Contains files separated by basket containing all available languages in SuttaCentral and files separated by basket, English translations only. Baskets separated by other languages coming soon, but it should be easy to separate them once you have the files downloaded and use the languge field.
+[Download here](https://github.com/username/tipitaka-db)
+Contains...
+
+1. Database files separated by basket with all available languages in SuttaCentral 
+2. Database files separated by basket, English translations and Pali only
+
+Baskets separated by other languages coming soon, but it should be easy to filter out for specific langauges once you have the files downloaded by using the languge field.
 
 ## Generate the databases
 
