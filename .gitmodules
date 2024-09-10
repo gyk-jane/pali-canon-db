@@ -1,0 +1,3 @@
+[submodule "suttacentral"]
+	path = suttacentral
+	url = https://github.com/suttacentral/suttacentral.git
