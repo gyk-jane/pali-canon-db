@@ -1,7 +1,5 @@
-notes.md
-sc-data/
-output/
-preprocess.db
-scratch.ipynb
+old/
 __pycache__/
 .DS_Store
+logs/
+.venv
