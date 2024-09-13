@@ -3,3 +3,4 @@ __pycache__/
 old/
 logs/
 arangodb_docker.md
+data_dump/arangodb-dump/
