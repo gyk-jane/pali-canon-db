@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: dev_raw    # This is the logical name you will refer to in your models.
+    schema: dev_raw  # This is the actual schema in your database.
+    tables:
+      - name: html_text_arangodb
+      - name: sc_bilara_texts_arangodb
+      - name: super_nav_details_arangodb
+      - name: super_nav_details_edges_arangodb
+      - name: sutta_suttaplex_sc
