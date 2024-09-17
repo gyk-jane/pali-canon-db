@@ -3,21 +3,7 @@ import sys
 import json
 from prefect import task, flow
 from collections import defaultdict
-from util.db_connection import connect_to_db
-
-@task(log_prints=True)
-def get_postgres_data(schema, table_name) -> list:
-    sql = f"""select *
-    from pali_canon.{schema}.{table_name}
-    """
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute(sql)
-    data = cur.fetchall()
-    conn.commit()
-    cur.close()
-    
-    return data
+from etl_scripts.util import connect_to_db, get_postgres_data
 
 @task(log_prints=True)
 def preprocess_graph(edges: list) -> json:

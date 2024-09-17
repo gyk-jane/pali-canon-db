@@ -4,9 +4,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import json
 from prefect import task, flow
-from util.db_connection import connect_to_db
+from etl_scripts.load.db_connection import connect_to_db
 from pathlib import Path
-import util.arangodb_helpers as arangodb
+import etl_scripts.load.arangodb_helpers as arangodb
 from extract.arangodb_fetch import extract_gz_file, export_arangodb_data
 from extract.api_fetch import get_suttaplex
 
@@ -50,7 +50,7 @@ def generate_create_sql(json_data, schema, table_name) -> str:
     return sql
 
 @task(log_prints=True)
-def load_source_to_dw(data, conn, schema, table_name) -> None:
+def insert_to_db(data, conn, schema, table_name) -> None:
     """Inserts data into PostgreSQL
 
     Args:
@@ -94,7 +94,7 @@ def html_test_flow():
         print(f'Error occurred: {e}')
         
     print('Inserting data...')
-    load_source_to_dw(html_text_json, conn, 'raw', 'html_text_arangodb')
+    insert_to_db(html_text_json, conn, 'raw', 'html_text_arangodb')
     
     conn.close()
     
@@ -116,7 +116,7 @@ def suttaplex_test_flow():
         print(f'Error occured: {e}')
         
     print('Inserting data...')
-    load_source_to_dw(sutta_json, conn, 'dev_raw', 'sutta_suttaplex_sc')
+    insert_to_db(sutta_json, conn, 'dev_raw', 'sutta_suttaplex_sc')
     
     conn.close()
     
@@ -156,7 +156,7 @@ def arangodb_test_exports():
             print(f'Error occurred: {e}')
             
         print('Inserting data...')
-        load_source_to_dw(json_data, conn, 'dev_raw', f"{collection}_arangodb")
+        insert_to_db(json_data, conn, 'dev_raw', f"{collection}_arangodb")
     
     conn.close()
     
