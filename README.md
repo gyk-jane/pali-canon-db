@@ -1,4 +1,4 @@
-# tipitaka-db
+# pali-canon-db
 
 ## Download the databases
 Download the pre-uploaded databases:
