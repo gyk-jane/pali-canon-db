@@ -1,5 +1,3 @@
-import os
-import sys
 import json
 from prefect import task, flow
 from collections import defaultdict
@@ -46,7 +44,7 @@ def insert_graph_to_postgres(graph: dict) -> None:
     conn.commit()
     cur.close()
     
-@flow
+@flow(log_prints=True)
 def stage_load_hierarchy_table():
     edges = get_postgres_data('dev_raw', 'super_nav_details_edges_arangodb')
     graph = preprocess_graph(edges)

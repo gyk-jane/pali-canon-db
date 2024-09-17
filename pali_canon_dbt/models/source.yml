@@ -9,3 +9,5 @@ sources:
       - name: super_nav_details_arangodb
       - name: super_nav_details_edges_arangodb
       - name: sutta_suttaplex_sc
+      - name: abhidhamma_suttaplex_sc
+      - name: vinaya_suttaplex_sc
