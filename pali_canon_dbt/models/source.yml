@@ -11,3 +11,7 @@ sources:
       - name: sutta_suttaplex_sc
       - name: abhidhamma_suttaplex_sc
       - name: vinaya_suttaplex_sc
+  - name: dev_stage
+    schema: dev_stage
+    tables:
+      - name: graph_table

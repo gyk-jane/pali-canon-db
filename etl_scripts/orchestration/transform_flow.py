@@ -10,17 +10,21 @@ def stage_load_hierarchy_table():
     insert_graph_to_postgres(graph)
     
 @flow(log_prints=True)
-def run_dbt_stage():
+def run_dbt(dir: str):
     project_dir = 'pali_canon_dbt'
     os.chdir(project_dir)
     
     print('Current working directory:', os.getcwd())
     
     os.system('env_dbt')
-    os.system('dbt run --select stage')
-
+    os.system(f'dbt run --select {dir}')
+    
 @flow(log_prints=True)
 def transform_stage_flow():
-    run_dbt_stage()
+    run_dbt('stage')
     stage_load_hierarchy_table()
+    
+@flow(log_prints=True)
+def transform_mart_flow():
+    run_dbt('mart.erd')
     
