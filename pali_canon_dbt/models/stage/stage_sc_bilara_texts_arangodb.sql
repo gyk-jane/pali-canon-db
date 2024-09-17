@@ -1,7 +1,7 @@
 {{ config(
     schema='stage',
     alias='sc_bilara_texts_arangodb',
-    materialized='view'
+    materialized='table'
 ) }}
 
 with transform_file_path as (

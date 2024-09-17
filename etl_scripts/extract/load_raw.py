@@ -8,7 +8,7 @@ from util.db_connection import connect_to_db
 from pathlib import Path
 import util.arangodb_helpers as arangodb
 from extract.arangodb_fetch import extract_gz_file, export_arangodb_data
-from extract.api_fetch import get_suttaplex, get_menu_data
+from extract.api_fetch import get_suttaplex
 
 @task(log_prints=True)
 def generate_create_sql(json_data, schema, table_name) -> str:
@@ -104,7 +104,7 @@ def suttaplex_test_flow():
     
     # sutta
     sutta_json = get_suttaplex('sutta')
-    sutta_sql = generate_create_sql(sutta_json, 'raw', 'sutta_suttaplex_sc')
+    sutta_sql = generate_create_sql(sutta_json, 'dev_raw', 'sutta_suttaplex_sc')
     print(sutta_sql)
     
     print('Creating raw sutta_suttaplex table')
@@ -116,7 +116,7 @@ def suttaplex_test_flow():
         print(f'Error occured: {e}')
         
     print('Inserting data...')
-    load_source_to_dw(sutta_json, conn, 'raw', 'sutta_suttaplex_sc')
+    load_source_to_dw(sutta_json, conn, 'dev_raw', 'sutta_suttaplex_sc')
     
     conn.close()
     
@@ -127,8 +127,6 @@ def arangodb_test_exports():
     arangodb.start_suttacentral()
     dump_directory = Path('/Users/janekim/Developer/tipitaka_db/data_dump/arangodb-dump')
 
-    # collections = ['child_range', 'super_nav_details', 
-    #                'text_contents', 'segmented_text_contents']
     collections = ['sc_bilara_texts', 'html_text', 'super_nav_details_edges', 'super_nav_details']
     dump_path = export_arangodb_data(collections=collections)
     
@@ -165,4 +163,4 @@ def arangodb_test_exports():
     
     
 if __name__ ==  '__main__':
-    arangodb_test_exports()
+    suttaplex_test_flow()

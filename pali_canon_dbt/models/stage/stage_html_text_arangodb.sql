@@ -1,7 +1,7 @@
 {{ config(
     schema='stage',
     alias='html_text_arangodb',
-    materialized='view'
+    materialized='table'
 ) }}
 
 with transform_file_path as (
