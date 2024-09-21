@@ -8,10 +8,10 @@ from etl_scripts.orchestration.transform_flow import transform_stage_flow, trans
 
 @flow(log_prints=True)
 def main_flow():
-    # # Extract and load source tables to PostgreSQL
+    # Extract and load source tables to PostgreSQL
     extract_and_load_flow()
     
-    # # Transform - Stage
+    # Transform - Stage
     transform_stage_flow()
     
     # Transform - Model

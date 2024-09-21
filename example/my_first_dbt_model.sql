@@ -7,7 +7,8 @@
     Try changing "table" to "view" below
 */
 
-{{ config(materialized='table') }}
+{{ config(materialized='table',
+    post_hook=[create_index(,'uid')]) }}
 
 with source_data as (
 

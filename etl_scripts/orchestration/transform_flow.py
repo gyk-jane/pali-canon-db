@@ -12,9 +12,10 @@ def stage_load_hierarchy_table():
 @flow(log_prints=True)
 def run_dbt(dir: str):
     project_dir = 'pali_canon_dbt'
-    os.chdir(project_dir)
     
     print('Current working directory:', os.getcwd())
+    if os.path.basename(os.getcwd()) != project_dir:
+        os.chdir(project_dir)
     
     os.system('env_dbt')
     os.system(f'dbt run --select {dir}')

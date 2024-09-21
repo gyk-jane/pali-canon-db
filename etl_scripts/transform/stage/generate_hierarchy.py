@@ -12,11 +12,14 @@ def preprocess_graph(edges: list) -> json:
         json: The graph dictionary of parent and children uids
     """
     parent_to_child = defaultdict(list)
+    child_uids = set()
     for edge in edges:
         _, _, _from, _to, _ = edge
         _from = _from.split('/')[1]
         _to = _to.split('/')[1]
-        parent_to_child[_from].append(_to)
+        if _to not in child_uids:
+            parent_to_child[_from].append(_to)
+        child_uids.add(_to)
         
     return parent_to_child
 
@@ -49,6 +52,7 @@ def stage_load_hierarchy_table():
     edges = get_postgres_data('dev_raw', 'super_nav_details_edges_arangodb')
     graph = preprocess_graph(edges)
     insert_graph_to_postgres(graph)
+    print('graph_table created')
     
 if __name__ == '__main__':
     stage_load_hierarchy_table()
