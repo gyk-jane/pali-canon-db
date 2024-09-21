@@ -3,57 +3,59 @@
     materialized='view'
 ) }}
 
-with sutta_info as (
+with all_info as (
     select
-        uid,
+        sc.uid,
         graph.parent_uid,
-        blurb,
-        original_title,
-        translated_title,
-        acronym,
-        difficulty,
+        sc.blurb,
+        sc.original_title,
+        sc.translated_title,
+        sc.acronym,
+        sc.difficulty,
         'sutta' as basket,
-        root_lang_name,
-        root_lang,
-        type
+        sc.root_lang_name,
+        sc.root_lang,
+        sc.type
     from
         {{ ref('stage_sutta_suttaplex_sc') }} as sc
     join
         {{ source('dev_stage', 'graph_table') }} as graph
         on graph.child_uid = uid
-),
-vinaya_info as (
+
+    union all
+
     select
-        uid,
+        sc.uid,
         graph.parent_uid,
-        blurb,
-        original_title,
-        translated_title,
-        acronym,
-        difficulty,
+        sc.blurb,
+        sc.original_title,
+        sc.translated_title,
+        sc.acronym,
+        sc.difficulty,
         'vinaya' as basket,
-        root_lang_name,
-        root_lang,
-        type
+        sc.root_lang_name,
+        sc.root_lang,
+        sc.type
     from
         {{ ref('stage_vinaya_suttaplex_sc') }} as sc
     join
         {{ source('dev_stage', 'graph_table') }} as graph
         on graph.child_uid = uid
-),
-abhidhamma_info as (
+
+    union all
+
     select
-        uid,
+        sc.uid,
         graph.parent_uid,
-        blurb,
-        original_title,
-        translated_title,
-        acronym,
-        difficulty,
+        sc.blurb,
+        sc.original_title,
+        sc.translated_title,
+        sc.acronym,
+        sc.difficulty,
         'abhidhamma' as basket,
-        root_lang_name,
-        root_lang,
-        type
+        sc.root_lang_name,
+        sc.root_lang,
+        sc.type
     from
         {{ ref('stage_abhidhamma_suttaplex_sc') }} as sc
     join
@@ -61,8 +63,4 @@ abhidhamma_info as (
         on graph.child_uid = uid
 )
 
-select * from sutta_info
-union all
-select * from vinaya_info
-union all
-select * from abhidhamma_info
+select * from all_info

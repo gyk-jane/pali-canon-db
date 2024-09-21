@@ -1,7 +1,8 @@
 {{ config(
     schema='stage',
     alias='sc_bilara_texts_arangodb',
-    materialized='table'
+    materialized='table',
+    post_hook=[create_index('sc_bilara_texts_arangodb','_key')]
 ) }}
 
 with transform_file_path as (
