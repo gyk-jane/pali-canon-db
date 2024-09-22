@@ -1,0 +1,53 @@
+version 2:
+
+models:
+  - name: Author
+    description: Contains translator name information of all texts
+    columns:
+      - name: author_uid
+        description: Primary key
+        data_tests:
+          - unique
+  - name: Language
+    description: Contains language information of all texts
+    columns:
+      - name: lang
+        description: Primary key
+        data_tests:
+          - unique
+  - name: TextInfo
+    description: Contains descriptive and categorical information of all the texts
+      in the Pali Canon
+    columns:
+      - name: uid
+        description: Priamry key
+        data_tests:
+          - unique
+          - not_null
+  - name: Translation
+    description: Contains granular information of the different translations of all
+      the texts in the Pali Canon
+    columns:
+      - name: translation_id
+        description: Primary key
+        data_tests:
+          - unique
+          - not_null
+      - name: uid
+        data_tests:
+          - relationships:
+              to: ref('TextInfo')
+              field: uid
+        description: Foreign key linking to TextInfo
+      - name: author_uid
+        data_tests:
+          - relationships:
+              to: ref('Author')
+              field: author_uid
+        description: Foreign key linking to Author
+      - name: lang
+        data_tests:
+          - relationships:
+              to: ref('Language')
+              field: lang
+        description: Foreign key linking to Language

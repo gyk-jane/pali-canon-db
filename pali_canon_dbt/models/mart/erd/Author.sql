@@ -3,22 +3,27 @@
     materialized='view'
 ) }}
 
-with author as (
-    select
-        distinct t.author_uid,
-        coalesce(s.author_short, v.author_short, a.author_short) as author_short,
-        coalesce(s.author, v.author, a.author) as author
-    from 
-        {{ ref('Translation') }} as t
-    left join
-        {{ ref('stage_sutta_translations_suttaplex_sc') }} as s
-        on t.author_uid = s.author_uid
-    left join
-        {{ ref('stage_vinaya_translations_suttaplex_sc') }} as v
-        on t.author_uid = v.author_uid
-    left join
-        {{ ref('stage_abhidhamma_translations_suttaplex_sc') }} as a
-        on t.author_uid = a.author_uid
+with all_authors as (
+    select author_uid, author_short, author, 1 as priority
+    from {{ ref('stage_sutta_translations_suttaplex_sc') }}
+    union all
+    select author_uid, author_short, author, 2 as priority
+    from {{ ref('stage_vinaya_translations_suttaplex_sc') }}
+    union all
+    select author_uid, author_short, author, 3 as priority
+    from {{ ref('stage_abhidhamma_translations_suttaplex_sc') }}
+),
+ranked_authors as (
+    select *,
+           row_number() over (partition by author_uid order by priority) as rn
+    from all_authors
 )
 
-select * from author
+select t.author_uid,
+       max(ra.author_short) as author_short,
+       max(ra.author) as author
+from {{ ref('Translation') }} t
+left join ranked_authors ra 
+    on t.author_uid = ra.author_uid 
+    and ra.rn = 1
+group by t.author_uid

@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: dev_raw    # This is the logical name you will refer to in your models.
-    schema: dev_raw  # This is the actual schema in your database.
+  - name: dev_raw
+    schema: dev_raw
     tables:
       - name: html_text_arangodb
       - name: sc_bilara_texts_arangodb

@@ -1,7 +1,8 @@
 {{ config(
     schema='stage',
     alias='abhidhamma_translations_suttaplex_sc',
-    materialized='table'
+    materialized='table',
+    post_hook=[create_index('abhidhamma_translations_suttaplex_sc',['translation_id', 'author_uid', 'lang'])]
 ) }}
 
 with exploded_translations as (

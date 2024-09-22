@@ -1,0 +1,274 @@
+models:
+  - name: stage_abhidhamma_suttaplex_sc
+    columns:
+      - name: acronym
+        data_type: text
+      - name: volpages
+        data_type: text
+      - name: alt_volpages
+        data_type: text
+      - name: uid
+        data_type: text
+        tests:
+          - unique
+      - name: blurb
+        data_type: text
+      - name: difficulty
+        data_type: text
+      - name: original_title
+        data_type: text
+      - name: root_lang
+        data_type: text
+      - name: root_lang_name
+        data_type: text
+      - name: type
+        data_type: text
+      - name: translated_title
+        data_type: text
+      - name: translations
+        data_type: jsonb
+      - name: parallel_count
+        data_type: integer
+      - name: biblio
+        data_type: text
+      - name: priority_author_uid
+        data_type: text
+      - name: verseno
+        data_type: text
+  - name: stage_abhidhamma_translations_suttaplex_sc
+    columns:
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+      - name: translation_id
+        data_type: text
+        tests:
+          - not_null
+          - unique
+      - name: lang
+        data_type: text
+      - name: title
+        data_type: text
+      - name: author
+        data_type: text
+      - name: is_root
+        data_type: boolean
+      - name: volpage
+        data_type: text
+      - name: lang_name
+        data_type: text
+      - name: segmented
+        data_type: boolean
+      - name: author_uid
+        data_type: text
+      - name: has_comment
+        data_type: boolean
+      - name: author_short
+        data_type: text
+      - name: publication_date
+        data_type: text
+  - name: stage_html_text_arangodb
+    columns:
+      - name: _key
+        data_type: text
+        tests:
+          - unique
+          - not_null
+      - name: _id
+        data_type: text
+      - name: _rev
+        data_type: text
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+      - name: lang
+        data_type: text
+      - name: path
+        data_type: text
+      - name: name
+        data_type: text
+      - name: author
+        data_type: text
+      - name: author_short
+        data_type: text
+      - name: author_uid
+        data_type: text
+      - name: publication_date
+        data_type: text
+      - name: volpage
+        data_type: text
+      - name: mtime
+        data_type: double precision
+      - name: file_path
+        data_type: text
+      - name: next
+        data_type: jsonb
+      - name: prev
+        data_type: jsonb
+      - name: local_file_path
+        data_type: text
+  - name: stage_sc_bilara_texts_arangodb
+    columns:
+      - name: _key
+        data_type: text
+        tests:
+          - not_null
+          - unique
+      - name: _id
+        data_type: text
+      - name: _rev
+        data_type: text
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+      - name: lang
+        data_type: text
+      - name: muids
+        data_type: jsonb
+      - name: file_path
+        data_type: text
+      - name: local_file_path
+        data_type: text
+  - name: stage_sutta_suttaplex_sc
+    columns:
+      - name: acronym
+        data_type: text
+      - name: volpages
+        data_type: text
+      - name: alt_volpages
+        data_type: text
+      - name: uid
+        data_type: text
+        tests:
+          - unique
+          - not_null
+      - name: blurb
+        data_type: text
+      - name: difficulty
+        data_type: text
+      - name: original_title
+        data_type: text
+      - name: root_lang
+        data_type: text
+      - name: root_lang_name
+        data_type: text
+      - name: type
+        data_type: text
+      - name: translated_title
+        data_type: text
+      - name: translations
+        data_type: jsonb
+      - name: parallel_count
+        data_type: integer
+      - name: biblio
+        data_type: text
+      - name: priority_author_uid
+        data_type: text
+      - name: verseno
+        data_type: text
+  - name: stage_sutta_translations_suttaplex_sc
+    columns:
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+      - name: translation_id
+        data_type: text
+        tests:
+          - unique
+          - not_null
+      - name: lang
+        data_type: text
+      - name: title
+        data_type: text
+      - name: author
+        data_type: text
+      - name: is_root
+        data_type: boolean
+      - name: volpage
+        data_type: text
+      - name: lang_name
+        data_type: text
+      - name: segmented
+        data_type: boolean
+      - name: author_uid
+        data_type: text
+      - name: has_comment
+        data_type: boolean
+      - name: author_short
+        data_type: text
+      - name: publication_date
+        data_type: text
+  - name: stage_vinaya_suttaplex_sc
+    columns:
+      - name: acronym
+        data_type: text
+      - name: volpages
+        data_type: text
+      - name: alt_volpages
+        data_type: text
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+          - unique
+      - name: blurb
+        data_type: text
+      - name: difficulty
+        data_type: text
+      - name: original_title
+        data_type: text
+      - name: root_lang
+        data_type: text
+      - name: root_lang_name
+        data_type: text
+      - name: type
+        data_type: text
+      - name: translated_title
+        data_type: text
+      - name: translations
+        data_type: jsonb
+      - name: parallel_count
+        data_type: integer
+      - name: biblio
+        data_type: text
+      - name: priority_author_uid
+        data_type: text
+      - name: verseno
+        data_type: text
+  - name: stage_vinaya_translations_suttaplex_sc
+    columns:
+      - name: uid
+        data_type: text
+        tests:
+          - not_null
+      - name: translation_id
+        data_type: text
+        tests:
+          - not_null
+          - unique
+      - name: lang
+        data_type: text
+      - name: title
+        data_type: text
+      - name: author
+        data_type: text
+      - name: is_root
+        data_type: boolean
+      - name: volpage
+        data_type: text
+      - name: lang_name
+        data_type: text
+      - name: segmented
+        data_type: boolean
+      - name: author_uid
+        data_type: text
+      - name: has_comment
+        data_type: boolean
+      - name: author_short
+        data_type: text
+      - name: publication_date
+        data_type: text
