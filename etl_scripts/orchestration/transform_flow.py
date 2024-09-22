@@ -8,6 +8,8 @@ def stage_load_hierarchy_table():
     edges = get_postgres_data('dev_raw', 'super_nav_details_edges_arangodb')
     graph = preprocess_graph(edges)
     insert_graph_to_postgres(graph)
+    print('graph_table created')
+
     
 @flow(log_prints=True)
 def run_dbt(dir: str):
