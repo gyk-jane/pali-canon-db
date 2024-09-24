@@ -10,8 +10,7 @@
   - [Installation and Setup](#installation-and-setup)
   - [Usage](#usage)
     - [Example queries](#example-queries)
-  - [How it was built](#how-it-was-built)
-    - [Architecture](#architecture)
+  - [Architecture](#architecture)
   - [Future work / To-do](#future-work--to-do)
   - [Contribute](#contribute)
 
@@ -119,8 +118,7 @@ This query builds the lineage of `mn11` recursively. For example, the output loo
 | -------- | -------|
 | mn11 > mn-sihanadavagga > mn-mulapannasa > mn > middle  | sutta |
 
-## How it was built
-### Architecture
+## Architecture
 ![Architecture](Architecture.png)
 
 All texts and metadata are sourced from [SuttaCentral](https://github.com/suttacentral), which provides comprehensive access to the Pali Canon.
