@@ -17,9 +17,5 @@ def main_flow():
     # Transform - Model
     transform_mart_flow()
     
-@flow(log_prints=True)
-def temp_flow():
-    extract_arangodb_flow('dev_raw', ['text_contents'])
-    
 if __name__ == '__main__':
     main_flow.serve(name="Pali Canon ETL")

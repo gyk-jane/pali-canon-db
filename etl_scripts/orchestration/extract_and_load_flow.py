@@ -2,12 +2,18 @@ from pathlib import Path
 from prefect import flow
 from etl_scripts.util import connect_to_db
 from etl_scripts.extract import api_fetch, arangodb_fetch
-from etl_scripts.load.arangodb_helpers import start_suttacentral
+from etl_scripts.load.arangodb_helpers import start_suttacentral_docker
 from etl_scripts.load.load import generate_create_sql, insert_to_db
 
 
 @flow(log_prints=True)
 def extract_suttaplex_flow(schema: str, basket: str):
+    """Extract suttaplex data from SuttaCentral API.
+
+    Args:
+        schema (str): PostgreSQL schema in which data should be placed
+        basket (str): Pali canon basket to be extracted
+    """    
     conn = connect_to_db()
     
     json_data = api_fetch.get_suttaplex(basket)
@@ -30,8 +36,14 @@ def extract_suttaplex_flow(schema: str, basket: str):
     
 @flow(log_prints=True)
 def extract_arangodb_flow(schema: str, collections):
+    """Extract data from arangodb backend db.
+
+    Args:
+        schema (str): PostgreSQL schema in which data should be placed
+        collections (str): Name of arangodb collection to be extracted
+    """    
     conn = connect_to_db()
-    start_suttacentral()
+    start_suttacentral_docker()
     dump_directory = Path('data_dump/arangodb-dump')
     
     for collection in collections:
@@ -64,6 +76,8 @@ def extract_arangodb_flow(schema: str, collections):
     
 @flow(log_prints=True)
 def extract_and_load_flow():
+    """Flow for extraction and loading of dev_raw tables
+    """
     collections = ['sc_bilara_texts', 'html_text', 'super_nav_details_edges']
     schema = 'dev_raw'
     extract_suttaplex_flow(schema, 'sutta')

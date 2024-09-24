@@ -5,7 +5,6 @@ import time
 import os
 from prefect import task, flow
 
-@task(log_prints=True)
 def is_docker_running():
     """Check if Docker daemon is running."""
     try:
@@ -14,7 +13,6 @@ def is_docker_running():
     except subprocess.CalledProcessError:
         return False
 
-@task(log_prints=True)
 def start_docker():
     """Start Docker depending on the OS."""
     system = platform.system()
@@ -41,8 +39,8 @@ def start_docker():
         print(f"Error starting Docker: {e}")
         return False
 
-def start_suttacentral():
-    """Start suttacentral service."""
+def start_suttacentral_docker():
+    """Start suttacentral Docker service."""
     if not is_docker_running():
         start_docker()
         
@@ -53,8 +51,8 @@ def start_suttacentral():
     except subprocess.CalledProcessError as e:
         print(f"Error starting suttacentral service: {e}")
 
-@task(log_prints=True)
 def start_sc_arangodb():
+    """Start sc_arangodb service"""
     if not is_docker_running():
         start_docker()
         
@@ -66,13 +64,11 @@ def start_sc_arangodb():
     except subprocess.CalledProcessError as e:
         print(f"Error starting sc-arangodb service: {e}")
         
-@task(log_prints=True)
 def pull_submodules():
     """Update all submodules to their latest commits"""
     subprocess.run(["git", "submodule", "update", "--remote", "--merge"], check=True)
     print("All submodules updated.")
     
-@task(log_prints=True)
 def refresh_arangodb():
     """Pull the latest updates and refresh ArangoDB."""
     try:
@@ -83,7 +79,7 @@ def refresh_arangodb():
                 return
 
         # Start the suttacentral service if it's not running
-        start_suttacentral()
+        start_suttacentral_docker()
         
         # Load new data into ArangoDB
         bash_script_path = 'etl_scripts/util/run_suttacentral.sh'
@@ -99,6 +95,3 @@ def refresh_arangodb():
         
     except subprocess.CalledProcessError as e:
         print(f"Error during data refresh: {e}")
-
-if __name__ == "__main__":
-    refresh_arangodb()

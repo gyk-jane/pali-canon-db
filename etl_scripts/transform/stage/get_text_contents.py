@@ -1,13 +1,22 @@
 import os
-import sys
 import json
-import logging
 from bs4 import BeautifulSoup
 from prefect_dask import DaskTaskRunner
 from prefect import task, flow, unmapped
 from etl_scripts.util import connect_to_db, split_into_batches
 
 def clean_text_content(file_path: str) -> str:
+    """Removes unnecessary characters in .json or .html files.
+
+    Args:
+        file_path (str): File path of the file
+
+    Raises:
+        ValueError: Raised if file that is not .json or .html is the input
+
+    Returns:
+        str: Cleaned text
+    """
     file_name = file_path.split('/')[-1]
     file_type = file_name.split('.')[-1].lower()
     
@@ -29,6 +38,15 @@ def clean_text_content(file_path: str) -> str:
 
 @task(log_prints=True)
 def process_translations_batch(translations_batch: list, schema: str, table_name: str):
+    """Process translations by batch. Ingests textual content to table_name via
+    a file_path provided by table_name from PostgreSQL db.
+
+    Args:
+        translations_batch (list): Each element is a list of _key and file_path
+        schema (str): Schema of table_name
+        table_name (str): Table name from schema. Is the source of translations and
+        target of text_content
+    """    
     conn = None
     try:
         conn = connect_to_db()
@@ -54,13 +72,22 @@ def process_translations_batch(translations_batch: list, schema: str, table_name
     except Exception as e:
         print.error(f'Error processing batch: {e}')
     finally:
+        # Always close connection at the end of batch processing.
         if conn:
             conn.close()
 
 @flow(log_prints=True, task_runner=DaskTaskRunner(cluster_kwargs={"n_workers": 1, 
                                                                   "threads_per_worker": 10,
                                                                   "processes": False}))
-def update_translations_in_parallel(schema, table_name, batch_size=500):
+def update_translations_in_parallel(schema: str, table_name: str, batch_size=500):
+    """Concurrently processes all batches of translations.
+
+    Args:
+        schema (str): Schema of table_name
+        table_name (str): Table name from schema. Is the source of translations and
+        target of text_content
+        batch_size (int, optional): Batch size of translations. Defaults to 500.
+    """    
     conn = connect_to_db()
     cur = conn.cursor()
     cur.execute(f"""

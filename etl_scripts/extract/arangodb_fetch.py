@@ -1,10 +1,8 @@
-import os
 import gzip
 import json
 import subprocess
 from prefect import task
 
-@task(log_prints=True)
 def export_arangodb_data(collections: list, output_dir: str = '/tmp/arangodb-dump') -> None:
     """Export arangodb data from arangodump command inside Docker container.
 
@@ -43,7 +41,6 @@ def export_arangodb_data(collections: list, output_dir: str = '/tmp/arangodb-dum
     except subprocess.CalledProcessError as e:
         print(f'Error during ArangoDB data dump: {e}')
         
-@task(log_prints=True)
 def extract_gz_file(input_gz_path: str, collection: str) -> list:
     """
     Extract a .gz file in-memory and return the JSON content as a list of dictionaries.
