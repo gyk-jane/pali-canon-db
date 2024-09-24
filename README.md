@@ -1,45 +1,34 @@
-# pali-canon-db
+# Pali Canon Database
+## Introduction
 
-## Download the databases
-Download the pre-uploaded databases:
+The Pali Canon database is a SQL relational database of the Pali Canon that provides a structural representation of the three baskets:
+- **Sutta Piṭaka** (discourses)
+- **Vinaya Piṭaka** (monastic rules), and 
+- **Abhidhamma Piṭaka** (philosophical teachings)
 
-1. Go to the project's repository on GitHub: [link to repository](https://github.com/username/tipitaka-db)
-2. Navigate to the "Databases" folder.
-3. Download the desired database files.
+By organizing these texts into a relational schema, the database can faciliate research and textual analysis. Scholars and practioners can run complex queries for in-depth exploration of the Pali Canon.
 
+All data is sourced from [SuttaCentral](https://github.com/suttacentral).
 
-## Navigating the Pali Canon Database
+## Schema Overview
+### Entity-Relationship Diagram
+![ERD](erd.png)
 
-This database contains a comprehensive collection of texts from the Pali Canon, along with their translations and related metadata. Below is a guide on how to navigate and use this database effectively.
-
-### Database Structure
-
-The database consists of five main tables:
-
-1. **Authors**
-2. **Languages**
-3. **TextInfo**
-4. **LeafLineage**
-5. **Translations**
-
-#### Authors Table
-
-This table contains information about the authors of the translations.
-
+#### Author
 - `author_uid`: Unique identifier for each author
 - `author_short`: Short name or abbreviation for the author
-- `author_fullname`: Full name of the author
+- `author`: Full name of the author
 
-#### Languages Table
+#### Language
 
-This table lists the languages used in the database.
+Lists the languages used in the database.
 
 - `lang`: Language code
 - `lang_name`: Full name of the language
 
-#### TextInfo Table
+#### TextInfo
 
-This table contains metadata about each text in the Pali Canon.
+Contains metadata about each text in the Pali Canon. 
 
 - `uid`: Unique identifier for each text
 - `parent_uid`: Identifier of the parent text (for hierarchical organization)
@@ -53,52 +42,79 @@ This table contains metadata about each text in the Pali Canon.
 - `root_lang`: Code of the original language
 - `type`: Type or category of the text
 
-#### LeafLineage Table
+#### Translation
 
-This table shows the lineage or hierarchy of texts.
+Contains informations and text content of each translation.
 
-- `uid`: Unique identifier of the text (corresponds to TextInfo.uid)
-- `lineage`: Represents the hierarchical path of the text
-
-#### Translations Table
-
-This table contains the actual translations of the texts.
-
-- `id`: Unique identifier for each translation
+- `translation_id`: Unique identifier for each translation
 - `uid`: Identifier of the original text (corresponds to TextInfo.uid)
-- `lang`: Language code of the translation
-- `lang_name`: Full name of the translation language
-- `author_uid`: Identifier of the translator (corresponds to Authors.author_uid)
-- `file_path`: Path to the translation file
-- `text`: The translated text content
+- `lang`: Language code of the translation (corresponds to Language.lang)
+- `author_uid`: Identifier of the translator (corresponds to Author.author_uid)
+- `local_file_path`: Path to the translation file
+- `basket`: Basket to which the translation belongs to
+- `text_context`: The text content of the translation
 
-### Querying the Database
+## Installation and Setup
 
-To navigate and query the database effectively, consider the following approaches:
+1. Install the latest version of the Pali Canon database in the [Release section](https://github.com/gyk-jane/pali-canon-db/releases). 
+2. Install [DB Browser](https://sqlitebrowser.org/dl/) for easy viewing and access.
 
-1. **Finding a specific text**: 
-   Use the `TextInfo` table to search by `uid`, `original_title`, or `translated_title`.
-
-2. **Exploring the canon structure**: 
-   Use the `LeafLineage` table in conjunction with `TextInfo` to understand the hierarchical organization of texts.
-
-3. **Retrieving translations**: 
-   Join the `Translations` table with `TextInfo` to get translations for specific texts.
-
-4. **Finding works by a specific author**: 
-   Use the `Authors` table joined with `Translations` to find all translations by a particular author.
-
-5. **Exploring texts by difficulty or type**: 
-   Query the `TextInfo` table using the `difficulty` or `type` fields to find texts of a particular category or complexity level.
-
-Example SQL query to get all translations of a specific text:
-
+## Usage
+### Example queries
+1. Searching for all occurences of "impermanence" in the text content of English translations:
 ```sql
-SELECT t.text, t.lang_name, a.author_fullname
-FROM Translations t
-JOIN TextInfo ti ON t.uid = ti.uid
-JOIN Authors a ON t.author_uid = a.author_uid
-WHERE ti.original_title = 'Your Text Title Here';
+SELECT 
+   tr.translation_id, 
+   tr.uid, 
+	ti.parent_uid,
+	ti.basket,
+   ti.translated_title,
+   a.author,
+   tr.text_content
+FROM 
+   Translation AS tr
+LEFT JOIN TextInfo ti
+   ON tr.uid = ti.uid
+LEFT JOIN Author a 
+   ON tr.author_uid = a.author_uid
+WHERE 
+   tr.text_content LIKE '%impermanence%' 
+   AND tr.lang = 'en';
 ```
 
-This structure allows for flexible navigation and querying of the Pali Canon texts, their translations, and associated metadata.
+2. Retrieving the lineage of a text
+```sql
+WITH RECURSIVE lineage AS (
+  SELECT uid, parent_uid, basket
+  FROM TextInfo 
+  WHERE uid = 'mn11'
+  UNION ALL
+  SELECT t.uid, t.parent_uid, t.basket
+  FROM TextInfo t
+  INNER JOIN lineage l ON t.uid = l.parent_uid
+)
+SELECT GROUP_CONCAT(uid, ' > ') AS lineage, basket
+FROM lineage
+ORDER BY LENGTH(uid) DESC
+LIMIT 1;
+```
+This query builds the lineage of `mn11` recursively. For example, the output looks like:
+| lineage  | basket |
+| -------- | -------|
+| mn11 > mn-sihanadavagga > mn-mulapannasa > mn > middle  | sutta |
+
+## How it was built
+### Architecture
+![Architecture](Architecture.png)
+
+All texts and metadata are sourced from [SuttaCentral](https://github.com/suttacentral), which provides comprehensive access to the Pali Canon.
+
+## Future work / To-do
+- [ ] Dockerize project to simplify deployment.
+- [ ] Enhance query speed and implement more advanced search capabilities, especially for searching through textual content.
+
+## Contribute
+Contributions are welcome! 
+
+- **Issues**: If you have any problems, questions, suggestions for improvement and new features, please open an issue.
+- **Pull requests**: Fork the repo and open a pull request to submit contrubitions to the project.
