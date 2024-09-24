@@ -1,4 +1,3 @@
-
 # Pali Canon Database
 ## Introduction
 
@@ -16,9 +15,6 @@ All data is sourced from [SuttaCentral](https://github.com/suttacentral).
 ![ERD](erd.png)
 
 #### Author
-
-Contains information about the authors of the translations.
-
 - `author_uid`: Unique identifier for each author
 - `author_short`: Short name or abbreviation for the author
 - `author`: Full name of the author
@@ -122,4 +118,3 @@ Contributions are welcome!
 
 - **Issues**: If you have any problems, questions, suggestions for improvement and new features, please open an issue.
 - **Pull requests**: Fork the repo and open a pull request to submit contrubitions to the project.
- 
