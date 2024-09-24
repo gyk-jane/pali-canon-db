@@ -30,6 +30,9 @@ All data is sourced from [SuttaCentral](https://github.com/suttacentral).
 ![ERD](erd.png)
 
 #### Author
+
+Contains author/translator codes and full names.
+
 - `author_uid`: Unique identifier for each author
 - `author_short`: Short name or abbreviation for the author
 - `author`: Full name of the author
