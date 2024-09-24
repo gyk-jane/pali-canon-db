@@ -1,8 +1,5 @@
 import requests
-import pandas as pd
-from prefect import flow, task
 
-@task(log_prints=True)
 def get_menu_data(uid: str) -> dict:
     """
     Retrieves menu data from SuttaCentral API based on the provided uid.
@@ -24,7 +21,6 @@ def get_menu_data(uid: str) -> dict:
         menu_data = None
     return menu_data
 
-@task(log_prints=True)
 def get_suttaplex(basket: str) -> None:
     """
     Retrieves suttaplex data from the SuttaCentral API for given basket.

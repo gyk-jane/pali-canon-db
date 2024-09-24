@@ -1,13 +1,13 @@
 import json
 from prefect import task
 
-@task(log_prints=True)
-def generate_create_sql(json_data, schema, table_name) -> str:
+def generate_create_sql(json_data: json, schema: str, table_name: str) -> str:
     """
     Generates a CREATE TABLE statement dynamically from all keys in the given JSON data.
 
     Args:
         json_data (json): JSON file from API get request
+        schema (string): Name of schema target table should be placed in
         table_name (string): Name of target table in Postgres
 
     Returns:
@@ -40,13 +40,13 @@ def generate_create_sql(json_data, schema, table_name) -> str:
     
     return sql
 
-@task(log_prints=True)
 def insert_to_db(data, conn, schema, table_name) -> None:
     """Inserts data into PostgreSQL
 
     Args:
         data (json): Data to be ingested
         conn (psycopg2 object): Connection to data warehouse
+        schema (string): Name of schema target table should be placed in
         table_name (string): Target table name
     """
     with conn.cursor() as cur:

@@ -1,15 +1,16 @@
 import json
-from prefect import task, flow
 from collections import defaultdict
-from etl_scripts.util import connect_to_db, get_postgres_data
+from etl_scripts.util import connect_to_db
 
-@task(log_prints=True)
 def preprocess_graph(edges: list) -> json:
     """Generate preprocess graph dictionary structure s.t. 
     keys are parent_uids and children are list of child_uids.
+    
+    Args:
+        edges: data from a Postgresql table
 
     Returns:
-        json: The graph dictionary of parent and children uids
+        json: The dictionary of parent_uid: list[children_uids]
     """
     parent_to_child = defaultdict(list)
     child_uids = set()
@@ -23,8 +24,12 @@ def preprocess_graph(edges: list) -> json:
         
     return parent_to_child
 
-@task(log_prints=True)
 def insert_graph_to_postgres(graph: dict) -> None:
+    """Insert hierarichal data to a table in PostgreSQL
+    
+    Args:
+        graph (dict): The dictionary of parent_uid: list[children_uids]
+    """
     conn = connect_to_db()
     cur = conn.cursor()
     

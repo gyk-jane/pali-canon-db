@@ -1,3 +1,6 @@
 [submodule "suttacentral"]
 	path = suttacentral
 	url = https://github.com/suttacentral/suttacentral.git
+[submodule "sc-data"]
+	path = sc-data
+	url = https://github.com/suttacentral/sc-data
