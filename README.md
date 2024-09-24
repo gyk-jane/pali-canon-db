@@ -37,7 +37,7 @@ Contains metadata about each text in the Pali Canon.
 - `translated_title`: Translated title
 - `acronym`: Acronym or short code for the text
 - `difficulty`: Indicates the difficulty level of the text
-- `basket`: Specifies which basket of the Pali Canon the text belongs to
+- `basket`: Basket to which the translation belongs to
 - `root_lang_name`: Name of the original language
 - `root_lang`: Code of the original language
 - `type`: Type or category of the text
