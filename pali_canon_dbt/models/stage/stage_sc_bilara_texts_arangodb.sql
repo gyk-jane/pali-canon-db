@@ -8,7 +8,8 @@
 with transform_file_path as (
     select 
         *,
-        replace(file_path, '/opt/sc/sc-flask/sc-data/', 'sc-data/') as local_file_path
+        replace(file_path, '/opt/sc/sc-flask/sc-data/', 'sc-data/') as local_file_path,
+        null as text_content
     from {{ source('dev_raw', 'sc_bilara_texts_arangodb') }}
 )
 

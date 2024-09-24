@@ -22,5 +22,4 @@ def temp_flow():
     extract_arangodb_flow('dev_raw', ['text_contents'])
     
 if __name__ == '__main__':
-    temp_flow()
-    # main_flow.serve(name="Pali Canon ETL")
+    main_flow.serve(name="Pali Canon ETL")

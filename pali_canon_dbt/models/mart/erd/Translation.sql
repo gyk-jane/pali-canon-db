@@ -10,7 +10,8 @@ with all_translations as (
         t.lang,
         t.author_uid,
         coalesce(html.local_file_path, sc.local_file_path) as local_file_path,
-        'sutta' as basket
+        'sutta' as basket,
+        coalesce(html.text_content, sc.text_content) as text_content
     from 
         {{ ref('stage_sutta_translations_suttaplex_sc') }} as t
     left join
@@ -27,7 +28,9 @@ with all_translations as (
         t.lang,
         t.author_uid,
         coalesce(html.local_file_path, sc.local_file_path) as local_file_path,
-        'vinaya' as basket
+        'vinaya' as basket,
+        coalesce(html.text_content, sc.text_content) as text_content
+
     from 
         {{ ref('stage_vinaya_translations_suttaplex_sc') }} as t
     left join
@@ -44,7 +47,9 @@ with all_translations as (
         t.lang,
         t.author_uid,
         coalesce(html.local_file_path, sc.local_file_path) as local_file_path,
-        'abhidhamma' as basket
+        'abhidhamma' as basket,
+        coalesce(html.text_content, sc.text_content) as text_content
+
     from 
         {{ ref('stage_abhidhamma_translations_suttaplex_sc') }} as t
     left join

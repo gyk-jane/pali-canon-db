@@ -1,9 +1,7 @@
 import json
-from prefect import task, flow
 from collections import defaultdict
 from etl_scripts.util import connect_to_db, get_postgres_data
 
-@task(log_prints=True)
 def preprocess_graph(edges: list) -> json:
     """Generate preprocess graph dictionary structure s.t. 
     keys are parent_uids and children are list of child_uids.
@@ -23,7 +21,6 @@ def preprocess_graph(edges: list) -> json:
         
     return parent_to_child
 
-@task(log_prints=True)
 def insert_graph_to_postgres(graph: dict) -> None:
     conn = connect_to_db()
     cur = conn.cursor()
