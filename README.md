@@ -18,7 +18,7 @@
 
 The Pali Canon database is a SQL relational database of the Pali Canon that provides a structural representation of the three baskets:
 - **Sutta Piṭaka**
-- **Vinaya Piṭaka**, and 
+- **Vinaya Piṭaka**
 - **Abhidhamma Piṭaka**
 
 By organizing these texts into a relational schema, the database can faciliate research and textual analysis. Scholars and practioners can run complex queries for in-depth exploration of the Pali Canon.
