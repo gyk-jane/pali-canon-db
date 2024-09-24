@@ -129,6 +129,7 @@ All texts and metadata are sourced from [SuttaCentral](https://github.com/suttac
 ## Future work / To-do
 - [ ] Dockerize project to simplify deployment.
 - [ ] Enhance query speed and implement more advanced search capabilities, especially for searching through textual content.
+- [ ] Implement CDC strategy to update target databases when data sources are updated.
 
 ## Contribute
 Contributions are welcome! 
