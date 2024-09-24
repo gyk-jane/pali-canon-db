@@ -14,8 +14,11 @@ def stage_load_hierarchy_table():
     print('graph_table created')
 
 @flow(log_prints=True)
-def run_dbt():
+def run_dbt(dir: str):
     """Run dbt process to create tables in PostgreSQL.
+    
+    Args:
+        dir (str): Directory to be run
     """
     project_dir = 'pali_canon_dbt'
     
