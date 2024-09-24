@@ -22,7 +22,7 @@ def generate_to_sqlite(sqlite_filepath: str='data_dump/PaliCanon.db',
     pg_cur.execute(f"""
                     select table_name
                     from information_schema.tables
-                    where table_schema = {schema}
+                    where table_schema = '{schema}'
                     """)
     tables = pg_cur.fetchall()
 
