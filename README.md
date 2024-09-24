@@ -1,4 +1,20 @@
 # Pali Canon Database
+- [Pali Canon Database](#pali-canon-database)
+  - [Introduction](#introduction)
+  - [Schema Overview](#schema-overview)
+    - [Entity-Relationship Diagram](#entity-relationship-diagram)
+      - [Author](#author)
+      - [Language](#language)
+      - [TextInfo](#textinfo)
+      - [Translation](#translation)
+  - [Installation and Setup](#installation-and-setup)
+  - [Usage](#usage)
+    - [Example queries](#example-queries)
+  - [How it was built](#how-it-was-built)
+    - [Architecture](#architecture)
+  - [Future work / To-do](#future-work--to-do)
+  - [Contribute](#contribute)
+
 ## Introduction
 
 The Pali Canon database is a SQL relational database of the Pali Canon that provides a structural representation of the three baskets:
