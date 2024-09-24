@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from prefect import flow
-from etl_scripts.orchestration.extract_and_load_flow import extract_and_load_flow
+from etl_scripts.orchestration.extract_and_load_flow import extract_and_load_flow, extract_arangodb_flow
 from etl_scripts.orchestration.transform_flow import transform_stage_flow, transform_mart_flow
 
 @flow(log_prints=True)
@@ -17,5 +17,10 @@ def main_flow():
     # Transform - Model
     transform_mart_flow()
     
+@flow(log_prints=True)
+def temp_flow():
+    extract_arangodb_flow('dev_raw', ['text_contents'])
+    
 if __name__ == '__main__':
-    main_flow.serve(name="Pali Canon ETL")
+    temp_flow()
+    # main_flow.serve(name="Pali Canon ETL")

@@ -1,5 +1,5 @@
 from pathlib import Path
-from prefect import task, flow
+from prefect import flow
 from etl_scripts.util import connect_to_db
 from etl_scripts.extract import api_fetch, arangodb_fetch
 from etl_scripts.load.arangodb_helpers import start_suttacentral
@@ -29,12 +29,10 @@ def extract_suttaplex_flow(schema: str, basket: str):
     conn.close()
     
 @flow(log_prints=True)
-def extract_arangodb_flow(schema: str):
+def extract_arangodb_flow(schema: str, collections):
     conn = connect_to_db()
     start_suttacentral()
-    dump_directory = Path('/Users/janekim/Developer/tipitaka_db/data_dump/arangodb-dump')
-
-    collections = ['sc_bilara_texts', 'html_text', 'super_nav_details_edges']
+    dump_directory = Path('data_dump/arangodb-dump')
     
     for collection in collections:
         # Find the file corresponding to the collection
@@ -66,10 +64,11 @@ def extract_arangodb_flow(schema: str):
     
 @flow(log_prints=True)
 def extract_and_load_flow():
+    collections = ['sc_bilara_texts', 'html_text', 'super_nav_details_edges']
     schema = 'dev_raw'
     extract_suttaplex_flow(schema, 'sutta')
     extract_suttaplex_flow(schema, 'vinaya')
     extract_suttaplex_flow(schema, 'abhidhamma')
 
-    extract_arangodb_flow(schema)
+    extract_arangodb_flow(schema, collections)
     

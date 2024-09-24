@@ -1,8 +1,8 @@
+import os
 import gzip
 import json
-import shutil
 import subprocess
-from prefect import task, flow
+from prefect import task
 
 @task(log_prints=True)
 def export_arangodb_data(collections: list, output_dir: str = '/tmp/arangodb-dump') -> None:
@@ -31,7 +31,7 @@ def export_arangodb_data(collections: list, output_dir: str = '/tmp/arangodb-dum
         subprocess.run(arangodump_cmd, check=True)
               
         # Copy dump from container to project's data_dumps folder
-        local_output_path = '/Users/janekim/Developer/tipitaka_db/data_dump'
+        local_output_path = 'data_dump'
         docker_cp_cmd = [
             "docker", "cp", f"sc-arangodb:{output_dir}", local_output_path
         ]
@@ -80,12 +80,5 @@ def extract_gz_file(input_gz_path: str, collection: str) -> list:
     except Exception as e:
         print(f"Error extracting {input_gz_path}: {e}")
         return None
-        
-if __name__ == "__main__":
-    html_in = 'data_dump/arangodb-dump/html_text_8a00c848c7b3360945795d3bc52ebe88.data.json.gz'
-    sc_bilara_in = 'data_dump/arangodb-dump/sc_bilara_texts_ede6cd7605f17ff53d131a783fb228e9.data.json.gz'
-    export_arangodb_data()
-    extract_gz_file(html_in)
-    extract_gz_file(sc_bilara_in)
-    print('successful')
+    
     

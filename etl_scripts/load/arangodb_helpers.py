@@ -2,6 +2,7 @@ import subprocess
 import subprocess
 import platform
 import time
+import os
 from prefect import task, flow
 
 @task(log_prints=True)
@@ -66,11 +67,10 @@ def start_sc_arangodb():
         print(f"Error starting sc-arangodb service: {e}")
         
 @task(log_prints=True)
-def pull_suttacentral_repo():
-    """Pull latest suttacentral github repo"""
-    subprocess.run(["git", "checkout", "main"], cwd='suttacentral', check=True)
-    subprocess.run(["git", "pull", "origin", "main"], cwd='suttacentral', check=True)
-    print("SuttaCentral repository updated.")
+def pull_submodules():
+    """Update all submodules to their latest commits"""
+    subprocess.run(["git", "submodule", "update", "--remote", "--merge"], check=True)
+    print("All submodules updated.")
     
 @task(log_prints=True)
 def refresh_arangodb():
@@ -86,7 +86,7 @@ def refresh_arangodb():
         start_suttacentral()
         
         # Load new data into ArangoDB
-        bash_script_path = '/Users/janekim/Developer/tipitaka_db/etl_scripts/util/run_suttacentral.sh'
+        bash_script_path = 'etl_scripts/util/run_suttacentral.sh'
         subprocess.run([bash_script_path], cwd='suttacentral', check=True, shell=True)
         print("Bash script executed successfully.") 
         print("Waiting for Docker containers to initialize...")

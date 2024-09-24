@@ -1,8 +1,7 @@
 import psycopg2
 from prefect import task, flow
 
-@task(log_prints=True)
-def connect_to_db() -> psycopg2.connect:
+def connect_to_db():
     conn = psycopg2.connect(
         host='localhost',
         dbname='pali_canon',
@@ -11,10 +10,9 @@ def connect_to_db() -> psycopg2.connect:
     )
     return conn
 
-@task(log_prints=True)
 def get_postgres_data(schema, table_name) -> list:
     sql = f"""select *
-    from pali_canon.{schema}.{table_name}
+    from pali_canon.{schema}."{table_name}"
     """
     conn = connect_to_db()
     cur = conn.cursor()
@@ -24,3 +22,8 @@ def get_postgres_data(schema, table_name) -> list:
     cur.close()
     
     return data
+
+def split_into_batches(data, batch_size):
+    """Splits data into batches of specified size."""
+    for i in range(0,len(data), batch_size):
+        yield data[i:i + batch_size]
