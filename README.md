@@ -62,7 +62,7 @@ Contains metadata about each text in the Pali Canon.
 
 #### Translation
 
-Contains informations and text content of each translation.
+Contains information and text content of each translation.
 
 - `translation_id`: Unique identifier for each translation
 - `uid`: Identifier of the original text (corresponds to TextInfo.uid)
